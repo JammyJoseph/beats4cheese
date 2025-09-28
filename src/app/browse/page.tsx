@@ -61,20 +61,28 @@ export default function BrowsePage() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to initiate download')
+        const errorData = await response.json()
+        
+        if (response.status === 402) {
+          // Insufficient credits
+          alert(`Insufficient credits. You need ${errorData.creditsNeeded} credits but only have ${errorData.creditsAvailable}. Please purchase more credits.`)
+          return
+        }
+        
+        throw new Error(errorData.error || 'Failed to initiate download')
       }
 
       const data = await response.json()
       
-      if (data.downloadUrl) {
+      if (data.url) {
         // Redirect to the download URL
-        window.open(data.downloadUrl, '_blank')
+        window.location.href = data.url
       } else {
         throw new Error('No download URL received')
       }
     } catch (err) {
       console.error('Download error:', err)
-      alert('Failed to download. Please try again.')
+      alert(`Failed to download: ${err instanceof Error ? err.message : 'Unknown error'}`)
     } finally {
       setDownloading(null)
     }
