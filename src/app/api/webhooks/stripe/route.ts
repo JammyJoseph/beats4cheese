@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supaAdmin'
+import { sendCreditReceipt } from '@/lib/mail'
 import Stripe from 'stripe'
 import { headers } from 'next/headers'
 
@@ -106,6 +107,32 @@ export async function POST(request: NextRequest) {
         }
 
         console.log(`Successfully processed payment for user ${userId}: ${calculatedCredits} credits, ${amountTotal} pence`)
+
+        // Send receipt email (non-blocking)
+        try {
+          // Get user email from profiles
+          const { data: profile } = await supabaseAdmin
+            .from('profiles')
+            .select('email')
+            .eq('id', userId)
+            .single()
+
+          if (profile?.email) {
+            // Get updated wallet balance
+            const { data: updatedWallet } = await supabaseAdmin
+              .from('wallets')
+              .select('credits')
+              .eq('userId', userId)
+              .single()
+
+            const newBalance = updatedWallet?.credits || 0
+            
+            await sendCreditReceipt(profile.email, calculatedCredits, amountTotal, newBalance)
+          }
+        } catch (emailError) {
+          console.error('Failed to send receipt email:', emailError)
+          // Don't fail the webhook processing if email fails
+        }
 
       } catch (error) {
         console.error('Error processing checkout.session.completed:', error)

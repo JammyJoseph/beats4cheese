@@ -84,3 +84,20 @@ The Beats4Cheese Team`
 
   return sendEmail(to, subject, textBody)
 }
+
+export async function sendCreditReceipt(to: string, credits: number, amountPence: number, newBalance: number): Promise<PostmarkResponse> {
+  const subject = 'Credit Purchase Receipt - Beats4Cheese'
+  const amount = (amountPence / 100).toFixed(2)
+  
+  const textBody = `Credit Purchase Receipt
+
+Amount: £${amount}
+Credits Added: ${credits}
+New Balance: ${newBalance} credits
+
+Thank you for your purchase!
+
+The Beats4Cheese Team`
+
+  return sendEmail(to, subject, textBody)
+}

@@ -98,7 +98,7 @@ export async function ensureProfile(): Promise<UserProfile | null> {
       console.error('Error creating wallet:', walletError)
     }
 
-    // Send welcome email
+    // Send welcome email (non-blocking)
     try {
       await sendWelcomeEmail(email, username)
     } catch (emailError) {
