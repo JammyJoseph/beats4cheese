@@ -1,6 +1,6 @@
 import { auth } from '@clerk/nextjs/server'
-import { supabaseAdmin } from './supaAdmin'
-import { sendWelcomeEmail } from './mail'
+import { supabaseAdmin } from '@/lib/supaAdmin'
+import { sendWelcomeEmail } from '@/lib/mail'
 
 export interface UserProfile {
   id: string

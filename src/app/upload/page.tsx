@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { ensureProfile } from '@/lib/profile'
 import Link from 'next/link'
-import UploadComponent from './UploadComponent'
+import Uploader from '@/components/Uploader'
 
 export default async function UploadPage() {
   const { userId } = await auth()
@@ -32,5 +32,5 @@ export default async function UploadPage() {
   // Ensure user profile exists
   await ensureProfile()
 
-  return <UploadComponent />
+  return <Uploader />
 }
