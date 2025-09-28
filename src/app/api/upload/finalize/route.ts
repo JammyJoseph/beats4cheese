@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supaAdmin'
 import ffmpeg from 'fluent-ffmpeg'
-import ffmpegStatic from 'ffmpeg-static'
+import ffmpegPath from 'ffmpeg-static'
 import { parseFile } from 'music-metadata'
 import { detectBpm } from 'bpm-detective'
 import { v4 as uuidv4 } from 'uuid'
@@ -9,6 +9,9 @@ import fs from 'fs'
 import path from 'path'
 
 export const runtime = 'nodejs'
+
+// Set ffmpeg path
+if (ffmpegPath) ffmpeg.setFfmpegPath(ffmpegPath as string)
 
 export async function POST(request: NextRequest) {
   try {
@@ -71,8 +74,7 @@ export async function POST(request: NextRequest) {
       writeStream.on('error', reject)
     })
 
-    // Set ffmpeg path from ffmpeg-static
-    ffmpeg.setFfmpegPath(ffmpegStatic!)
+    // ffmpeg path is already set at module level
 
     // Create 30s 128k mp3 preview
     await new Promise((resolve, reject) => {
